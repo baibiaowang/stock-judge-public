@@ -645,7 +645,7 @@ function renderPage(){
 }
 function goPage(page,push){
   if(state.cur)return;
-  if(page==='home'&&state.page==='home')return;
+  if(state.page===page)return;
   state.page=page;
   if(push)history.pushState({sjPage:page},'', '#'+page);
   renderPage();
@@ -759,7 +759,7 @@ function commentSheet(raw){
   $('sheetInner').innerHTML='<h3>点评 · '+esc(r.name)+'</h3><textarea id="sheetCmt" placeholder="写下你的判断…">'+esc(cmts[k]||'')+'</textarea><div class="sheet-actions"><button class="btn-secondary" id="sheetCancel">取消</button><button class="btn-primary" id="sheetSave">保存</button></div>';
   $('sheetMask').classList.add('show');history.pushState({sjSheet:true,sjDetail:true},'','#sheet');
   $('sheetCancel').onclick=()=>history.back();
-  $('sheetSave').onclick=()=>{const v=$('sheetCmt').value.trim();if(v)cmts[k]=v;else delete cmts[k];saveCmt();$('sheetMask').classList.remove('show');if(state.cur)openDetail(state.cur,true);renderAllLists();toast('点评已保存');};
+  $('sheetSave').onclick=()=>{const v=$('sheetCmt').value.trim();if(v)cmts[k]=v;else delete cmts[k];saveCmt();history.back();setTimeout(()=>{if(state.cur)openDetail(state.cur,true);renderAllLists();toast('点评已保存');},0);};
 }
 function closeSheet(){ $('sheetMask').classList.remove('show'); }
 $('detailBack').onclick=()=>history.back();
@@ -786,11 +786,13 @@ function restoreBackup(){
     fr.readAsText(f);
   };input.click();
 }
+function verNum(v){return String(v||'').split('.').map(x=>parseInt(x,10)||0).concat([0,0,0]).slice(0,3);}
+function newerVersion(a,b){const x=verNum(a),y=verNum(b);for(let i=0;i<3;i++){if(x[i]!==y[i])return x[i]>y[i];}return false;}
 async function checkUpdate(){
   try{
     const r=await fetch(UPDATE_URL,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);
     const j=await r.json(), latest=String(j.version||'');
-    if(latest && latest!==APP_VERSION && latest>APP_VERSION){
+    if(latest && newerVersion(latest,APP_VERSION)){
       const ok=confirm('发现新版本 '+latest+'，现在打开下载页面？');
       if(ok&&j.apk_url)location.href=j.apk_url;
       else if(ok&&j.url)location.href=j.url;
