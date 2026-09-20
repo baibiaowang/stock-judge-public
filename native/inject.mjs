@@ -14,7 +14,7 @@ let h=fs.readFileSync(P,'utf8');
 function jsSingleQuote(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r/g,'\\r').replace(/\n/g,'\\n').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');}
 h=h.split('__DATA_URL__').join(jsSingleQuote(urls));
 if(h.includes('__DATA_URL__')){console.error('placeholder remains');process.exit(1);}
-const blocks=[...h.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(m=>m[1]);
+const blocks=[...h.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 for(const b of blocks){try{new Function(b);}catch(e){console.error('JS parse failed: '+e.message);process.exit(1);}}
 fs.writeFileSync(P,h);
 console.log('[inject] ok urls='+urls.split('\n').length+' scripts='+blocks.length);
