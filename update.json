@@ -1,0 +1,5 @@
+{
+  "version": "1.2.0",
+  "notes": "新版底部整页菜单、手动修改判断结果/性质/结论、公司概况、设置与更新入口",
+  "apk_url": "https://github.com/baibiaowang/stock-judge-public/actions/workflows/build-apk.yml"
+}
