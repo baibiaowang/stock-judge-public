@@ -502,7 +502,7 @@ async function decryptText(txt){
 async function loadFromUrl(u){const r=await fetch(u,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);return decryptText(await r.text());}
 async function loadRemote(){
   const errs=[];
-  for(const u of getUrls()){try{return await loadFromUrl(u);}catch(e){errs.push(u.replace(/^https?:\\/\\//,'').slice(0,48)+' → '+e.message);}}
+  for(const u of getUrls()){try{return await loadFromUrl(u);}catch(e){errs.push(u.replace(/^https?:\/\//,'').slice(0,48)+' → '+e.message);}}
   throw new Error(errs.join('；'));
 }
 
@@ -686,17 +686,17 @@ function saveManualChanges(r){
 function renderAllLists(){if(!state.data)return;renderHome();if(state.page==='types')renderTypes();if(state.page==='conclusions')renderConclusions();if(state.page==='comments')renderComments();if(state.page==='favorites')renderFavorites();}
 
 function findRaw(code,cat){return (state.data.records||[]).find(r=>String(r.code)===String(code)&&String(r.category||'')===String(cat||''));}
-function code6(code){const m=String(code||'').match(/\\d{6}/);return m?m[0]:String(code||'');}
+function code6(code){const m=String(code||'').match(/\d{6}/);return m?m[0]:String(code||'');}
 function overviewUrl(code){return 'https://basic.10jqka.com.cn/'+code6(code)+'/';}
 function annTypes(a,r){
   let raw=a.types||a.categories||a.category||a.type||a.tag||a.column||'';
-  let arr=Array.isArray(raw)?raw:String(raw).split(/[,、|\\/]+/).map(x=>x.trim()).filter(Boolean);
+  let arr=Array.isArray(raw)?raw:String(raw).split(/[,、|\//]+/).map(x=>x.trim()).filter(Boolean);
   if(!arr.length&&r.category)arr=[r.category];
   return [...new Set(arr)];
 }
 function annSort(anns){
   return anns.slice().sort((a,b)=>{
-    const da=Date.parse(String(a.date||'').replace(/\\./g,'-'))||0, db=Date.parse(String(b.date||'').replace(/\\./g,'-'))||0;
+    const da=Date.parse(String(a.date||'').replace(/\./g,'-'))||0, db=Date.parse(String(b.date||'').replace(/\./g,'-'))||0;
     return db-da;
   });
 }
