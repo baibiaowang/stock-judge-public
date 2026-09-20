@@ -379,10 +379,10 @@ a{color:inherit;text-decoration:none}
 <header class="app-top" id="topbar">
   <div class="top-row">
     <button class="top-back" id="pageBack" style="display:none">‹</button>
-    <div class="top-title" id="topTitle">股票</div>
+    <div class="top-title" id="topTitle">共 0 条</div>
   </div>
   <div id="homeSearch" class="home-search"><input id="q" type="search" placeholder="搜索名称 / 代码" autocomplete="off"></div>
-  <div id="homeCount" class="home-count">共 0 条</div>
+  <div id="homeCount" class="home-count" style="display:none"></div>
 </header>
 
 <main id="homePage" class="page show">
@@ -561,7 +561,7 @@ function bindStockRows(root){
 
 function renderHome(){
   if(!state.data)return;
-  const rows=filteredHome(); $('homeCount').textContent='共 '+rows.length+' 条';
+  const rows=filteredHome(); $('topTitle').textContent='共 '+rows.length+' 条';
   $('homeHint').textContent=(state.kind==='local'?'本地导入数据 · 不会被后台刷新覆盖':state.kind==='cache'?'缓存数据':'实时数据');
   $('homeList').innerHTML=rows.length?'<div class="stock-card">'+rows.slice(0,PAGE_SIZE).map(r=>stockRow(r,{})).join('')+'</div>':'<div class="empty">没有匹配的股票</div>';
   bindStockRows($('homeList'));
@@ -637,8 +637,8 @@ function renderSettings(){
 function renderPage(){
   ['home','types','conclusions','comments','favorites','settings'].forEach(p=>$(p==='home'?'homePage':p==='types'?'typePage':p==='conclusions'?'conclusionPage':p==='comments'?'commentPage':p==='favorites'?'favoritePage':'settingsPage').classList.toggle('show',state.page===p));
   $('homeSearch').style.display=state.page==='home'?'block':'none';
-  $('homeCount').style.display=state.page==='home'?'block':'none';
-  $('topTitle').textContent=state.page==='home'?'股票':({types:'类型',conclusions:'结论',comments:'点评',favorites:'收藏',settings:'设置'})[state.page];
+  $('homeCount').style.display='none';
+  $('topTitle').textContent=state.page==='home'?'共 '+((state.data&&filteredHome().length)||0)+' 条':({types:'类型',conclusions:'结论',comments:'点评',favorites:'收藏',settings:'设置'})[state.page];
   $('pageBack').style.display=state.page==='home'?'none':'block';
   document.querySelectorAll('.bottom-btn').forEach(b=>b.classList.toggle('on',({types:'types',conclusions:'conclusions',comments:'comments',favorites:'favorites',settings:'settings'})[b.dataset.page]===state.page));
   if(state.page==='home')renderHome(); else if(state.page==='types')renderTypes(); else if(state.page==='conclusions')renderConclusions(); else if(state.page==='comments')renderComments(); else if(state.page==='favorites')renderFavorites(); else renderSettings();
